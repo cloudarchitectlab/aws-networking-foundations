@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+terraform.tfvars
+*.tfvars
+
+# VS Code
+.vscode/
+
+# Local environment
+.env
+.env.*

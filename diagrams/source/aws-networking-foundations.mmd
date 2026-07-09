@@ -1,0 +1,35 @@
+graph TD
+
+%% ==========
+%% External
+%% ==========
+
+Internet((Internet))
+
+%% ==========
+%% Edge
+%% ==========
+
+IGW[Internet Gateway]
+
+%% ==========
+%% AWS Region - us-east-1
+%% ==========
+
+subgraph AWS["AWS Region - us-east-1"]
+
+    subgraph VPC["VPC - 10.0.0.0/16"]
+
+        Public["Public Subnet<br/>10.0.1.0/24"]
+        Private["Private Subnet<br/>10.0.2.0/24"]
+
+    end
+
+end
+
+%% ==========
+%% Connectivity
+%% ==========
+
+Internet --> IGW
+IGW --> Public

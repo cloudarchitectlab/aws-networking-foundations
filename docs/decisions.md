@@ -46,15 +46,17 @@ Treating architecture diagrams as source artifacts ensures that architectural do
 
 ---
 
-## Decision 4 — Keep the Initial Architecture Intentionally Simple
+## Decision 4 — Build the Network in Incremental Milestones
 
 ### Decision
 
-Begin with a minimal networking implementation before introducing advanced networking components.
+Implement the networking architecture through small, validated milestones rather than deploying a complete production-style environment in a single iteration.
 
 ### Rationale
 
-Establishing a clear and well-understood foundation simplifies troubleshooting and provides a stable baseline for future enhancements such as private subnets, NAT Gateways, multi-AZ deployments, and VPC peering.
+Incremental implementation allows each networking concept to be designed, implemented, validated, documented, and committed independently.
+
+This approach keeps the architecture aligned with the deployed infrastructure while reducing complexity during development. It also produces clearer documentation by allowing each milestone to focus on a single architectural concept before introducing the next.
 
 ---
 
@@ -117,5 +119,21 @@ Model communication between the public web tier and the private application tier
 ### Rationale
 
 Port 8080 is commonly used by enterprise application servers such as Apache Tomcat, Spring Boot, and other Java-based web applications. Although this project does not yet deploy an application, using a realistic application port demonstrates a common multi-tier architecture pattern while remaining independent of any specific application framework.
+
+---
+
+## Decision 9 — Keep Documentation Aligned with Deployed Infrastructure
+
+### Decision
+
+Architecture diagrams and documentation will always represent the current Terraform-managed infrastructure unless explicitly marked as a proposed or target architecture.
+
+### Rationale
+
+Keeping documentation synchronized with deployed infrastructure prevents confusion between implemented and planned capabilities.
+
+Future architectural designs may be documented separately as proposed architecture, but the primary project documentation should accurately reflect the current implementation.
+
+This approach reinforces Infrastructure as Code and Architecture as Code by ensuring diagrams, documentation, and Terraform evolve together.
 
 ---

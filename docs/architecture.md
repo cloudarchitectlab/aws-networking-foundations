@@ -12,17 +12,17 @@ The objective of this project is to build a secure, repeatable AWS networking fo
 
 The architecture consists of a custom Amazon Virtual Private Cloud (VPC) deployed within a single AWS Region.
 
-The initial implementation establishes the foundational networking components required for future workloads:
+The current implementation establishes the foundational network security architecture required for future workloads.
+
+Terraform currently manages:
 
 - Custom Virtual Private Cloud (VPC)
-- Public Subnet
-- Internet Gateway
-- Public Route Table
-- Private Route Table
-- Network ACL
-- Security Groups
+- Public Web Security Group
+- Private Application Security Group
 
-This networking layer serves as the base upon which future case studies will build additional capabilities, including private subnets, NAT Gateways, EC2 instances, VPC Peering, and multi-AZ architectures.
+AWS automatically provides several default networking components as part of the VPC, including the main route table, default Network ACL, and default security group. These resources are not explicitly managed by Terraform during this milestone.
+
+This foundation will support future milestones introducing subnets, Internet Gateway, custom route tables, NAT Gateway, EC2 workloads, VPC peering, and multi-AZ architectures.
 
 ---
 
@@ -52,40 +52,21 @@ The initial architecture intentionally focuses on foundational AWS networking co
 
 The VPC provides logical isolation for cloud resources and defines the project's private network boundary.
 
-### Public Subnet
+### AWS Default Networking Components
 
-The public subnet hosts resources that require direct internet connectivity through the Internet Gateway.
+Creating a VPC automatically provisions several default networking resources, including:
 
-### Internet Gateway
+- Main Route Table
+- Default Network ACL
+- Default Security Group
 
-The Internet Gateway enables communication between resources in the public subnet and the public Internet.
+These resources currently remain under AWS default management and are intentionally not replaced during this milestone.
 
-### Route Tables
-
-Route tables determine how network traffic flows within the VPC and to external destinations. While subnets define network boundaries, route tables determine where traffic is permitted to travel.
-
-This architecture uses separate route tables for the public and private subnets.
-
-The **Public Route Table** contains:
-
-- `10.0.0.0/16 → Local`
-- `0.0.0.0/0 → Internet Gateway`
-
-The **Private Route Table** currently contains only:
-
-- `10.0.0.0/16 → Local`
-
-Because the private route table does not include a default route to the Internet Gateway, resources deployed into the private subnet remain isolated from direct internet access while still communicating with other resources inside the VPC through the AWS-provided Local route.
-
-This routing design establishes the networking foundation for future milestones, including NAT Gateway deployment, multi-tier application architectures, and secure private workloads.
-
-### Network ACL
-
-The Network Access Control List (NACL) provides stateless subnet-level traffic filtering.
+Future milestones will introduce Terraform-managed subnets, Internet Gateway, route tables, route table associations, and additional networking components as the architecture evolves.
 
 ## Security Groups
 
-This environment uses AWS Security Groups as the primary network access control mechanism. Security Groups are stateful virtual firewalls that control traffic to individual AWS resources.
+This environment uses AWS Security Groups as the primary instance-level network access control mechanism. Security Groups are stateful virtual firewalls that control traffic to individual AWS resources.
 
 ### Public Web Security Group
 
@@ -111,32 +92,20 @@ Rather than allowing traffic from an IP address or subnet, the private applicati
 
 ## Network Topology
 
-The current architecture consists of a single VPC containing one public subnet with controlled internet access through an Internet Gateway.
+The current architecture consists of a dedicated Amazon VPC containing two Terraform-managed Security Groups that establish the project's initial network security boundaries.
 
-The architecture intentionally separates network structure from routing behavior. Public and private subnets are associated with independent route tables, allowing internet connectivity to be controlled through routing decisions rather than subnet definitions alone.
+At this milestone, no subnets, Internet Gateway, custom route tables, NAT Gateway, or compute resources have been deployed. The architecture focuses on establishing reusable security policies before introducing workload-specific infrastructure.
+
+AWS default networking components—including the main route table, default Network ACL, and default security group—exist as part of the VPC but are not explicitly managed through Terraform during this milestone.
 
 The complete architecture is documented in the following assets:
 
 - Source: `diagrams/source/aws-networking-foundations.mmd`
 - Rendered Diagram: `diagrams/exported/aws-networking-foundations.svg`
 
-## Milestone CAL-001.02 — Route Tables
-
-This milestone expands the initial VPC architecture by introducing dedicated route tables for the public and private subnets.
-
-The public route table includes both the AWS-provided Local route and a default route (`0.0.0.0/0`) that directs internet-bound traffic through the Internet Gateway.
-
-The private route table intentionally contains only the Local route, preventing direct internet connectivity while preserving communication within the VPC.
-
-This milestone demonstrates an important AWS networking principle:
-
-> **Subnets define network boundaries. Route tables determine how traffic moves through those boundaries.**
-
-Establishing separate routing behavior at this stage prepares the architecture for future milestones, including NAT Gateway deployment, private application workloads, and multi-tier network designs.
-
 ---
 
-## Architectural Constraints
+## Current Implementation Scope
 
 This project intentionally omits several production-oriented components while focusing on foundational networking concepts.
 
@@ -150,7 +119,27 @@ Current exclusions include:
 - Direct Connect
 - Hybrid networking
 
-These capabilities will be introduced in subsequent Cloud Architect Lab case studies.
+These capabilities will be introduced in future milestones of CAL-001 and in subsequent Cloud Architect Lab case studies, as appropriate.
+
+---
+
+## Future Evolution
+
+The networking foundation established in this milestone is intentionally minimal and serves as the baseline for future Cloud Architect Lab case studies.
+
+Planned enhancements include:
+
+- Public subnet
+- Private subnet
+- Internet Gateway
+- Custom route tables
+- Route table associations
+- NAT Gateway
+- EC2 workloads
+- Multi-AZ networking
+- VPC peering
+
+Each enhancement will be introduced as an incremental milestone, allowing the architecture, Infrastructure as Code, validation evidence, and documentation to evolve together.
 
 ---
 

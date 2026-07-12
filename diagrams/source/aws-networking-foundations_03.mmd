@@ -1,0 +1,43 @@
+flowchart TB
+
+%% =============================================================================
+%% Cloud Architect Lab
+%% CAL-001 - AWS Networking Foundations
+%% =============================================================================
+%% Milestone: CAL-001.02
+%% Title: Route Tables
+%% =============================================================================
+%% What changed:
+%% • Added public and private route tables.
+%% • Added explicit subnet-to-route-table associations.
+%% • Documented the VPC local route.
+%% • Documented the public default route to the Internet Gateway.
+%% • Added a future NAT Gateway placeholder.
+%% =============================================================================
+
+Internet((Internet))
+
+IGW["Internet Gateway"]
+
+subgraph AWS["AWS Region - us-east-1"]
+
+    subgraph VPC["VPC - 10.0.0.0/16"]
+
+        PublicRT["Public Route Table<br/><br/>Local<br/>10.0.0.0/16<br/><br/> Default<br/>0.0.0.0/0 -> Internet Gateway"]
+
+        PrivateRT["Private Route Table<br/>10.0.0.0/16 -> Local"]
+
+        Public["Public Subnet<br/>10.0.1.0/24"]
+
+        Private["Private Subnet<br/>10.0.2.0/24"]
+
+        NAT["NAT Gateway<br/><i>Future Milestone</i>"]
+
+    end
+end
+
+Internet --> IGW
+IGW --> PublicRT
+
+PublicRT -. "Association" .-> Public
+PrivateRT -. "Association" .-> Private

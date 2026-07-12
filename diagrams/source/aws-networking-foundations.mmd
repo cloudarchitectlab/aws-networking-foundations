@@ -4,40 +4,43 @@ flowchart TB
 %% Cloud Architect Lab
 %% CAL-001 - AWS Networking Foundations
 %% =============================================================================
-%% Milestone: CAL-001.02
-%% Title: Route Tables
+%% Diagram Type: Current As-Built Architecture
+%% Milestone: Security Group Foundations
+%% Terraform State: Current
 %% =============================================================================
-%% What changed:
-%% • Added public and private route tables.
-%% • Added explicit subnet-to-route-table associations.
-%% • Documented the VPC local route.
-%% • Documented the public default route to the Internet Gateway.
-%% • Added a future NAT Gateway placeholder.
+%% Terraform-managed resources:
+%% • VPC
+%% • Public web security group
+%% • Private application security group
+%% =============================================================================
+%% AWS-managed default resources:
+%% • Main route table
+%% • Default network ACL
+%% • Default security group
+%% =============================================================================
+%% No subnets, Internet Gateway, NAT Gateway, custom route tables,
+%% route-table associations, or compute resources are currently deployed.
 %% =============================================================================
 
 Internet((Internet))
 
-IGW["Internet Gateway"]
+TrustedAdmin["Trusted Administrator<br/>Configured CIDR"]
 
 subgraph AWS["AWS Region - us-east-1"]
 
     subgraph VPC["VPC - 10.0.0.0/16"]
 
-        PublicRT["Public Route Table<br/><br/>Local<br/>10.0.0.0/16<br/><br/> Default<br/>0.0.0.0/0 -> Internet Gateway"]
+        PublicSG["Public Web Security Group<br/><br/>HTTP 80 from Internet<br/>HTTPS 443 from Internet<br/>SSH 22 from Trusted CIDR<br/><br/>All outbound traffic allowed"]
 
-        PrivateRT["Private Route Table<br/>10.0.0.0/16 -> Local"]
+        PrivateSG["Private Application Security Group<br/><br/>TCP 8080 from<br/>Public Web Security Group only<br/><br/>All outbound traffic allowed"]
 
-        Public["Public Subnet<br/>10.0.1.0/24"]
-
-        Private["Private Subnet<br/>10.0.2.0/24"]
-
-        NAT["NAT Gateway<br/><i>Future Milestone</i>"]
+        Defaults["Default VPC Components (AWS Managed)<br/><br/>Main Route Table<br/>Default Network ACL<br/>Default Security Group<br/><br/><i>Not explicitly managed by Terraform</i>"]
 
     end
 end
 
-Internet --> IGW
-IGW --> PublicRT
+Internet -.->|"Ingress rule source<br/>HTTP 80 / HTTPS 443"| PublicSG
 
-PublicRT -. "Association" .-> Public
-PrivateRT -. "Association" .-> Private
+TrustedAdmin -.->|"Ingress rule source<br/>SSH 22"| PublicSG
+
+PublicSG -.->|"Security group reference<br/>TCP 8080"| PrivateSG
